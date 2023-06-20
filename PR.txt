@@ -1,0 +1,9 @@
+# Persistência de dados
+
+# Setup de bases de dados
+
+# Como importou a informação na base de dados
+
+# Respostas textuais pedidas
+
+# Instruções de como executar as aplicações desenvolvidas
