@@ -1,0 +1,34 @@
+extends layout
+
+block content
+    w3-card-4
+        .header.w3-container.w3-teal
+            h1 #{repairsMarca[0].viatura.marca}
+
+            h2 Lista Modelos Itervencionados pela Oficina
+            
+            each repair in repairsMarca
+                li #{repair.viatura.modelo}
+
+        
+        .w3-container
+            table.w3-table-all
+                tr
+                    th ID 
+                    th Data
+                    th Nome
+                    th Matrícula
+                    th Número de Intervenções
+
+                each repair in repairsMarca 
+                    tr 
+                        td 
+                            a(href="/"+repair._id) #{repair._id}
+                        td #{repair.data}
+                        td #{repair.nome}
+                        td #{repair.viatura.matricula}
+                        td #{repair.nr_intervencoes}
+
+
+        .footer.w3-container.w3-teal
+            h5 Voltar ao #[a(href="/") inicio]

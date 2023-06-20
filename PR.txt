@@ -1,9 +1,90 @@
 # Persistência de dados
 
-# Setup de bases de dados
+## 1.1 Introduz as alterações que achares necessárias no dataset;
 
-# Como importou a informação na base de dados
+Inicialmente, alterei o dataset para ser importável como "-jsonArray" no mongoDb,
+desfazendo-me das '{' '}' exteriores, fazendo com que o nível exterior do dataset seja '[' ']'
 
-# Respostas textuais pedidas
+
+
+## Importa-o numa base de dados em MongoDB
+
+mongoimport -d autoRepair -c repairs --file dataset_reparacoes.json --jsonArray
+
+
+
+## Testa se a importação correu bem.
+
+2023-06-20T09:24:08.205+0100    connected to: mongodb://localhost/
+2023-06-20T09:24:08.711+0100    5000 document(s) imported successfully. 0 document(s) failed to import.
+
+
+
+# 1.2 Queries (warm-up)
+
+Primeiro naveguei para dentro da db "autoRepair" com 'use autoRepair'
+
+## 1.2.1 Quantos automóveis foram reparados?
+
+db.repairs.count()
+-> 5000
+
+## 1.2.2 Quantos automóveis da marca "Cadillac" foram reparados?
+
+db.repairs.find({"viatura.marca": {$regex:"Cadillac"}}).count()
+-> 91
+
+## 1.2.3 Que marcas de automóveis já apareceram na oficina (ordenada alfabeticamente e sem repetições)?
+
+db.repairs.distinct("viatura.marca").sort()
+-> [
+  'Alfa Romeo', 'Aston Martin', 'Audi',       'BMW',
+  'Bentley',    'Cadillac',     'Chery',      'Chevrolet',
+  'Chrysler',   'Citroen',      'DFM',        'Dacia',
+  'Daewoo',     'Daihatsu',     'Dodge',      'Ferrari',
+  'Fiat',       'Ford',         'Geely',      'Honda',
+  'Hyundai',    'Infiniti',     'Isuzu',      'Jaguar',
+  'Jeep',       'Kia',          'Lada',       'Lamborghini',
+  'Lancia',     'Land Rover',   'Maserati',   'Mazda',
+  'Mercedes',   'Mini',         'Mitsubishi', 'Nissan',
+  'Opel',       'Peugeot',      'Porsche',    'Proton',
+  'Renault',    'Rover',        'Saab',       'Seat',
+  'Skoda',      'Smart',        'SsangYong',  'Subaru',
+  'Suzuki',     'Tata',         'Tofaş',      'Toyota',
+  'Volkswagen', 'Volvo'
+]
+
+## 1.2.4 Qual a distribuição por tipo de reparação? (por exemplo: quantas mudanças de óleo, quantas mudanças de filtro, ...)
+
+-> db.repairs.aggregate([{$group:{_id:"$intervencoes.nome",count:{$sum:1}}}])
+
+## 1.2.5 Qual a distribuição do número de clientes por ano?
+
+db.repairs.aggregate([{$group:{_id: {$substr:["$data",0,4]} ,count:{$sum:1}}}])
+
+-> [
+  { _id: '2016', count: 586 },
+  { _id: '2017', count: 567 },
+  { _id: '2020', count: 567 },
+  { _id: '2018', count: 572 },
+  { _id: '2019', count: 600 },
+  { _id: '2021', count: 590 },
+  { _id: '2022', count: 577 },
+  { _id: '2015', count: 626 },
+  { _id: '2023', count: 315 }
+]
+
+
+# 1.3 API de dados
+
+npx express-generator --view=no-view
+
+Alterar porta 16016
+
+npm install mongoose --save
+
 
 # Instruções de como executar as aplicações desenvolvidas
+
+Para cada uma das aplicações
+> npm i && npm start
